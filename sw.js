@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dayline-pwa-v3';
+const CACHE_NAME = 'dayline-pwa-v4';
 const APP_SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', (event) => {
@@ -36,6 +36,59 @@ self.addEventListener('fetch', (event) => {
         .catch(() => cached || caches.match('./index.html'));
 
       return cached || networkFetch;
+    })
+  );
+});
+
+self.addEventListener('push', (event) => {
+  let payload = {
+    title: 'Dayline',
+    body: '你有一个新的提醒。',
+    url: './'
+  };
+
+  try {
+    if (event.data) {
+      payload = { ...payload, ...event.data.json() };
+    }
+  } catch {
+    payload.body = event.data ? event.data.text() : payload.body;
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(payload.title || 'Dayline', {
+      body: payload.body || '你有一个新的提醒。',
+      badge: './icon-192.png',
+      icon: './icon-192.png',
+      tag: payload.tag || `dayline-${Date.now()}`,
+      data: {
+        url: payload.url || './'
+      }
+    })
+  );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const targetUrl = event.notification.data?.url || './';
+
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
+      for (const client of clients) {
+        if ('focus' in client) {
+          client.focus();
+          if ('navigate' in client) {
+            return client.navigate(targetUrl);
+          }
+          return undefined;
+        }
+      }
+
+      if (self.clients.openWindow) {
+        return self.clients.openWindow(targetUrl);
+      }
+
+      return undefined;
     })
   );
 });
