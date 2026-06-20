@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dayline-pwa-v10';
+const CACHE_NAME = 'dayline-pwa-v11';
 const APP_SHELL = ['./manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', (event) => {
