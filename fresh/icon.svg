@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Dayline">
+  <rect width="256" height="256" rx="54" fill="#161719"/>
+  <path d="M71 178V78h46c31 0 58 18 58 50s-27 50-58 50H71Z" fill="#f7f8fa"/>
+  <path d="M105 148h13c15 0 27-7 27-20s-12-20-27-20h-13v40Z" fill="#161719"/>
+  <path d="M70 199h116" stroke="#0A84FF" stroke-width="14" stroke-linecap="round"/>
+  <path d="M70 57h74" stroke="#30D158" stroke-width="14" stroke-linecap="round"/>
+</svg>
