@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Cache-Control" content="no-store" />
+    <meta name="theme-color" content="#f6f7f9" />
+    <title>Dayline 正在更新</title>
+    <style>
+      :root {
+        color: #161719;
+        background: #f6f7f9;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans CJK SC",
+          "Microsoft YaHei", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        display: grid;
+        min-height: 100dvh;
+        margin: 0;
+        place-items: center;
+        padding: 24px;
+      }
+
+      main {
+        display: grid;
+        gap: 14px;
+        width: min(440px, 100%);
+        padding: 26px;
+        border: 1px solid rgba(22, 23, 25, 0.1);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.92);
+      }
+
+      span {
+        color: #0a64c5;
+        font-size: 13px;
+        font-weight: 780;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 28px;
+      }
+
+      p {
+        margin: 0;
+        color: #5f646d;
+        line-height: 1.6;
+      }
+
+      button,
+      a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        border: 0;
+        border-radius: 8px;
+        padding: 0 14px;
+        background: #161719;
+        color: #fff;
+        font: inherit;
+        font-weight: 740;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <span>Dayline</span>
+      <h1>正在切换到最新版</h1>
+      <p id="status">正在清理旧缓存，这不会删除你的账号数据。</p>
+      <button id="retry" type="button">重新尝试更新</button>
+      <a href="./?v=12">直接进入新版</a>
+    </main>
+    <script>
+      async function updateDayline() {
+        const status = document.getElementById('status');
+        try {
+          if ('serviceWorker' in navigator) {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(registrations.map((registration) => registration.unregister()));
+          }
+
+          if ('caches' in window) {
+            const keys = await caches.keys();
+            await Promise.all(keys.filter((key) => key.startsWith('dayline-pwa-')).map((key) => caches.delete(key)));
+          }
+
+          status.textContent = '更新完成，正在进入新版。';
+          window.setTimeout(() => {
+            window.location.replace('./?v=12&updated=' + Date.now());
+          }, 500);
+        } catch (error) {
+          console.error(error);
+          status.textContent = '自动更新失败，请点击“直接进入新版”，或删除旧桌面图标后重新添加。';
+        }
+      }
+
+      document.getElementById('retry').addEventListener('click', updateDayline);
+      updateDayline();
+    </script>
+  </body>
+</html>
+
